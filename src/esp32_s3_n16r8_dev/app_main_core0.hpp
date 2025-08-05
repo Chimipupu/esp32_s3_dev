@@ -1,0 +1,23 @@
+/**
+ * @file app_main_core0.hpp
+ * @author Chimipupu(https://github.com/Chimipupu)
+ * @brief  Core0 アプリ
+ * @version 0.1
+ * @date 2025-08-05
+ * 
+ * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
+ * 
+ */
+#ifndef APP_MAIN_CORE0_HPP
+#define APP_MAIN_CORE0_HPP
+
+// FreeRTOS
+#include <task.h>
+
+// RGBLED
+// #include "app_neopixel.hpp"
+
+void app_main_init_core0(void);
+void app_main_core0(void);
+
+#endif /* APP_MAIN_CORE0_HPP */
