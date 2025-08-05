@@ -59,7 +59,7 @@ void core1_init(void)
 void core1_main(void)
 {
 #if 1
-    Serial.printf("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
+    DBG_PRINTF("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
     app_fs_info();
     app_fs_psram_test();
     vTaskDelay(1000 / portTICK_PERIOD_MS);

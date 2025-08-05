@@ -20,7 +20,7 @@ static bool s_wifi_flg = true;
 #if 0
 void vTaskCore1WiFi(void *p_parameter)
 {
-    Serial.printf("[Core1] vTaskCore1WiFi\n");
+    DBG_PRINTF("[Core1] vTaskCore1WiFi\n");
     app_neopixel_main(16, 0, 0, 0, true, false); // red
     app_wifi_init();
 
@@ -29,9 +29,9 @@ void vTaskCore1WiFi(void *p_parameter)
         s_wifi_flg = app_wifi_main();
 
         if(s_wifi_flg != true){
-            Serial.printf("[Core1] vTaskCore1WiFi Suspend now!\n");
+            DBG_PRINTF("[Core1] vTaskCore1WiFi Suspend now!\n");
             vTaskSuspend(NULL);
-            Serial.printf("[Core1] vTaskCore1WiFi Resume!\n");
+            DBG_PRINTF("[Core1] vTaskCore1WiFi Resume!\n");
         }
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
@@ -40,7 +40,7 @@ void vTaskCore1WiFi(void *p_parameter)
 
 void vTaskCore1Main(void *p_parameter)
 {
-    // Serial.printf("[Core1] vTaskCore1Main\n");
+    // DBG_PRINTF("[Core1] vTaskCore1Main\n");
 
     while (1)
     {
@@ -49,8 +49,8 @@ void vTaskCore1Main(void *p_parameter)
         {
             // DeepSleep @DEEPSLEEP_TIME_US
             uint32_t dat = (DEEPSLEEP_TIME_US / 60) / 1000000;
-            Serial.printf("[Core1] vTaskCore1Main ... No Proc. DeepSleep Now!\n");
-            Serial.printf("DeepSleep : %d min\n", dat);
+            DBG_PRINTF("[Core1] vTaskCore1Main ... No Proc. DeepSleep Now!\n");
+            DBG_PRINTF("DeepSleep : %d min\n", dat);
             app_neopixel_main(16, 0, 16, 0, true, false); // 紫
             esp_deep_sleep_start();
         } else {

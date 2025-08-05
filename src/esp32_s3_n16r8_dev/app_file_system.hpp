@@ -14,9 +14,12 @@
 
 #include "common.hpp"
 
-#define HEAP_SRAM                 0
-#define HEAP_PSRAM                1
-#define PSRAM_MALLOC_TEST_SIZE    32
+#define HEAP_SRAM                 0x00
+#define HEAP_PSRAM                0x01
+#define HEAP_PSRAM_8BIT           0x10
+#define HEAP_PSRAM_32BIT          0x20
+
+#define PSRAM_MALLOC_TEST_SIZE    8
 
 #include "FS.h"
 #include "FFat.h"

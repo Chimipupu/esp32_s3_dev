@@ -39,6 +39,8 @@
 extern portMUX_TYPE g_mux;
 extern SemaphoreHandle_t xSerialMutex;
 
+#define DBG_PRINTF      Serial.printf
+
 #define CPU_CORE_0      0
 #define CPU_CORE_1      1
 
