@@ -3,9 +3,9 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief  Core1 アプリ
  * @version 0.1
- * @date 2025-08-05
+ * @date 2026-01-26
  * 
- * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
+ * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  * 
  */
 #ifndef APP_MAIN_CORE1_HPP

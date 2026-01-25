@@ -3,9 +3,9 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief Arduino IDE用ファイル
  * @version 0.1
- * @date 2025-08-05
+ * @date 2026-01-26
  * 
- * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
+ * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  * 
  */
 
@@ -17,6 +17,8 @@
 SemaphoreHandle_t xSerialMutex;
 portMUX_TYPE g_mux = portMUX_INITIALIZER_UNLOCKED;
 
+// ====================================================================
+// [CPU Core 0関連]
 #if 0
 // CPU Core0
 void vTaskCore0Main(void *p_parameter)
@@ -25,26 +27,31 @@ void vTaskCore0Main(void *p_parameter)
 
     while (1)
     {
-#if 1
-        app_fs_info();
-        app_fs_psram_test();
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-#else
         app_main_core0();
         vTaskDelay(100 / portTICK_PERIOD_MS);
-#endif
     }
 }
 #endif
 
-#if 1
-// CPU Core1
+// ====================================================================
+// [CPU Core 1関連]
 void core1_init(void)
 {
+    // シリアル
     Serial.begin(115200);
-    // app_main_init_core1();
-    app_fs_psram_init();
+    while (!Serial) {
+        WDT_TOGGLE;
+    }
+    DBG_PRINTF("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
 
+    // PSRAM初期化
+    app_fs_psram_init();
+    app_fs_psram_test();
+
+    // app_main_init_core1();
+
+    // CPU Core 0関連初期化
+    app_main_init_core0();
 #if 0
     xTaskCreatePinnedToCore(vTaskCore0Main,    // コールバック関数ポインタ
                             "vTaskCore0Main",  // タスク名
@@ -58,13 +65,5 @@ void core1_init(void)
 
 void core1_main(void)
 {
-#if 1
-    DBG_PRINTF("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
-    app_fs_info();
-    app_fs_psram_test();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-#else
     app_main_core1();
-#endif
 }
-#endif

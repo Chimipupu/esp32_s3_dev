@@ -101,12 +101,14 @@ void app_fs_psram_init(void)
  */
 void app_fs_psram_test(void)
 {
+    uint8_t *p_psram_ptr = NULL;
     s_is_psram = psramFound();
+
     if (s_is_psram) {
-        DBG_PRINTF("[PSRAM Test]\n");
         heap_print(HEAP_PSRAM);
+        DBG_PRINTF("[PSRAM Test]\n");
         DBG_PRINTF("PSRAM malloc size = %d byte\n", PSRAM_MALLOC_TEST_SIZE);
-        uint8_t *p_psram_ptr = (uint8_t *)app_fs_heap_malloc(PSRAM_MALLOC_TEST_SIZE, HEAP_PSRAM_8BIT);
+        p_psram_ptr = (uint8_t *)app_fs_heap_malloc(PSRAM_MALLOC_TEST_SIZE, HEAP_PSRAM_8BIT);
         if (p_psram_ptr != NULL) {
             p_psram_ptr[0] = 0x12;
             p_psram_ptr[1] = 0x34;
@@ -116,12 +118,10 @@ void app_fs_psram_test(void)
             p_psram_ptr[5] = 0xEF;
             DBG_PRINTF("[DEBUG] 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X\n",
                             p_psram_ptr[0], p_psram_ptr[1], p_psram_ptr[2], p_psram_ptr[3], p_psram_ptr[4], p_psram_ptr[5]);
-
             heap_print(HEAP_PSRAM);
             DBG_PRINTF("PSRAM malloc free\n");
             free((void *)p_psram_ptr);
             heap_print(HEAP_PSRAM);
-
             DBG_PRINTF("[DEBUG] PSRAM Test Success!\n");
         } else {
             DBG_PRINTF("[ERROR] PSRAM Test Failed\n");

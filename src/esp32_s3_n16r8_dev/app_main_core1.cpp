@@ -3,9 +3,9 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief  Core1 アプリ
  * @version 0.1
- * @date 2025-08-05
+ * @date 2026-01-26
  * 
- * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
+ * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  * 
  */
 
@@ -38,13 +38,13 @@ void vTaskCore1WiFi(void *p_parameter)
 }
 #endif
 
+#if 0
 void vTaskCore1Main(void *p_parameter)
 {
     // DBG_PRINTF("[Core1] vTaskCore1Main\n");
 
     while (1)
     {
-#if 0
         if (s_wifi_flg != true)
         {
             // DeepSleep @DEEPSLEEP_TIME_US
@@ -57,27 +57,14 @@ void vTaskCore1Main(void *p_parameter)
             // TODO: Core1メインタスクの処理実装
             NOP;
         }
-#else
-        app_fs_info();
-        app_fs_psram_test();
-#endif
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
+#endif
 
 void app_main_init_core1(void)
 {
     xSerialMutex = xSemaphoreCreateMutex();
-
-    // UART
-    Serial.begin(115200);
-    while (!Serial) {
-        WDT_TOGGLE;
-    }
-
-    // PSRAM初期化
-    app_fs_psram_init();
-    app_fs_psram_test();
 
     // Deep Sleep
     // esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
@@ -90,7 +77,6 @@ void app_main_init_core1(void)
                             3,                 // 優先度(0～7、7が最優先)
                             &s_xTaskCore1WiFi, // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
-#endif
 
     xTaskCreatePinnedToCore(vTaskCore1Main,   // コールバック関数ポインタ
                             "vTaskCore1Main", // タスク名
@@ -99,6 +85,7 @@ void app_main_init_core1(void)
                             6,                 // 優先度(0～7、7が最優先)
                             &s_xTaskCore1Main, // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
+#endif
 }
 
 void app_main_core1(void)
