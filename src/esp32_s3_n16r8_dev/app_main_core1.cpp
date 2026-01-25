@@ -69,6 +69,10 @@ void app_main_init_core1(void)
     // Deep Sleep
     // esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
 
+#ifdef SYSTEM_RAM_TEST
+    app_fs_system_ram_test();
+#endif
+
 #if 0
     xTaskCreatePinnedToCore(vTaskCore1WiFi,     // コールバック関数ポインタ
                             "vTaskCore1WiFi",   // タスク名

@@ -11,6 +11,8 @@
 
 #include "app_file_system.hpp"
 
+#define BUF_MAX_SIZE    (1024 * 32)
+
 static bool s_is_psram = false;
 static uint32_t s_heap_size = 0;
 static uint32_t s_free_size = 0;
@@ -90,41 +92,89 @@ void app_fs_psram_init(void)
     s_is_psram = psramInit();
     if (s_is_psram) {
         DBG_PRINTF("PSRAM Inited\n");
+        heap_print(HEAP_PSRAM);
     } else {
         DBG_PRINTF("This ESP32 is PSRAM does not exist\n");
     }
 }
 
-/**
- * @brief PSRAMのテスト
- * 
- */
-void app_fs_psram_test(void)
+#ifdef SYSTEM_RAM_TEST
+static void ram_test_proc(uint8_t *p_heap)
 {
-    uint8_t *p_psram_ptr = NULL;
-    s_is_psram = psramFound();
+    uint32_t start_time, end_time;
+    float time_ms;
+    float speed_mbs;
+    volatile uint8_t read_temp;
+    uint32_t rand_idx = 0;
+    uint32_t i;
 
-    if (s_is_psram) {
-        heap_print(HEAP_PSRAM);
-        DBG_PRINTF("[PSRAM Test]\n");
-        DBG_PRINTF("PSRAM malloc size = %d byte\n", PSRAM_MALLOC_TEST_SIZE);
-        p_psram_ptr = (uint8_t *)app_fs_heap_malloc(PSRAM_MALLOC_TEST_SIZE, HEAP_PSRAM_8BIT);
-        if (p_psram_ptr != NULL) {
-            p_psram_ptr[0] = 0x12;
-            p_psram_ptr[1] = 0x34;
-            p_psram_ptr[2] = 0x56;
-            p_psram_ptr[3] = 0xAB;
-            p_psram_ptr[4] = 0xCD;
-            p_psram_ptr[5] = 0xEF;
-            DBG_PRINTF("[DEBUG] 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X, 0x%02X\n",
-                            p_psram_ptr[0], p_psram_ptr[1], p_psram_ptr[2], p_psram_ptr[3], p_psram_ptr[4], p_psram_ptr[5]);
-            heap_print(HEAP_PSRAM);
-            DBG_PRINTF("PSRAM malloc free\n");
-            free((void *)p_psram_ptr);
-            heap_print(HEAP_PSRAM);
-            DBG_PRINTF("[DEBUG] PSRAM Test Success!\n");
-        } else {
-            DBG_PRINTF("[ERROR] PSRAM Test Failed\n");
+    if (p_heap != NULL) {
+        // --- Write Test (Sequential) ---
+        start_time = micros();
+        for (size_t i = 0; i < BUF_MAX_SIZE; i++) {
+            p_heap[i] = (uint8_t)(i & 0xFF);
         }
+        end_time = micros();
+
+        time_ms = (end_time - start_time) / 1000.0;
+        speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
+        DBG_PRINTF("  Write (Seq) : %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
+
+        // --- Read Test (Sequential) ---
+        start_time = micros();
+        for (i = 0; i < BUF_MAX_SIZE; i++)
+        {
+            read_temp = p_heap[i];
+        }
+        end_time = micros();
+
+        time_ms = (end_time - start_time) / 1000.0;
+        speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
+        DBG_PRINTF("  Read  (Seq) : %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
+
+        // --- Read Test (Random) ---
+        rand_idx = 0;
+        start_time = micros();
+        for (i = 0; i < (BUF_MAX_SIZE / 2); i++)
+        {
+            rand_idx = (rand_idx + 2) & (BUF_MAX_SIZE - 1);
+            read_temp = p_heap[rand_idx];
+        }
+        end_time = micros();
+
+        time_ms = (end_time - start_time) / 1000.0;
+        speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
+        DBG_PRINTF("  Read  (Rand): %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
+
+        free(p_heap);
+    } else {
+        DBG_PRINTF("Malloc Failed (Not enough heap)\n");
     }
 }
+
+/**
+ * @brief RAMテスト(SRAMとPSRAM)
+ * */
+void app_fs_system_ram_test(void)
+{
+    uint8_t *p_heap = NULL;
+
+    DBG_PRINTF("=====================================\n");
+    DBG_PRINTF("   ESP32-S3 Memory Benchmark (Size: %d KB)\n", BUF_MAX_SIZE / 1024);
+    DBG_PRINTF("=====================================\n");
+
+    DBG_PRINTF("[SRAM Test]\n");
+    p_heap = (uint8_t *)heap_caps_malloc(BUF_MAX_SIZE, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+    ram_test_proc(p_heap);
+
+    DBG_PRINTF("-------------------------------------\n");
+    s_is_psram = psramFound();
+    if (s_is_psram) {
+        DBG_PRINTF("[PSRAM Test]\n");
+        p_heap = (uint8_t *)app_fs_heap_malloc(BUF_MAX_SIZE, HEAP_PSRAM_8BIT);
+        ram_test_proc(p_heap);
+    }
+
+    DBG_PRINTF("=====================================\n");
+}
+#endif // SYSTEM_RAM_TEST

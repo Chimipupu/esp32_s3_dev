@@ -17,7 +17,7 @@ void core0RgbLedTask(void *p_parameter)
 {
     static uint8_t s_color = 0;
 
-    DBG_PRINTF("[Core0] ... core0RgbLedTask\n");
+    // DBG_PRINTF("[Core0] ... core0RgbLedTask\n");
     app_neopixel_init();
     app_neopixel_set_color(0, NEOPIXCEL_COLOR_OFF);
 

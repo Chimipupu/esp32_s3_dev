@@ -46,9 +46,6 @@ void core1_init(void)
 
     // PSRAM初期化
     app_fs_psram_init();
-    app_fs_psram_test();
-
-    // app_main_init_core1();
 
     // CPU Core 0関連初期化
     app_main_init_core0();
@@ -61,6 +58,9 @@ void core1_init(void)
                             NULL,              // ハンドル
                             CPU_CORE_0);       // Core0 or Core1
 #endif
+
+    // CPU Core 1関連初期化
+    app_main_init_core1();
 }
 
 void core1_main(void)
