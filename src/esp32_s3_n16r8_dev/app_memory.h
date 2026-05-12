@@ -12,8 +12,11 @@
 
 #include "common.hpp"
 
+#if 0
 #include "FS.h"
 #include "FFat.h"
+#define FILE_SYSTEM               FFat
+#endif
 
 // -----------------------------------------------------------
 // [コンパイルスイッチ]
@@ -28,8 +31,6 @@
 #define HEAP_PSRAM_32BIT          0x20
 
 #define PSRAM_MALLOC_TEST_SIZE    8
-
-#define FILE_SYSTEM               FFat
 
 // -----------------------------------------------------------
 void app_fs_info(void);
