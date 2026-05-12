@@ -10,7 +10,7 @@
 #include "common.hpp"
 #include "app_main_core0.hpp"
 #include "app_main_core1.hpp"
-#include "app_file_system.hpp"
+#include "app_memory.h"
 
 SemaphoreHandle_t xSerialMutex;
 portMUX_TYPE g_mux = portMUX_INITIALIZER_UNLOCKED;

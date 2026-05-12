@@ -9,7 +9,7 @@
 
 #include "common.hpp"
 #include "app_main_core1.hpp"
-#include "app_file_system.hpp"
+#include "app_memory.h"
 
 static xTaskHandle s_xTaskCore1WiFi;
 static xTaskHandle s_xTaskCore1Main;
@@ -67,7 +67,7 @@ void app_main_init_core1(void)
     // Deep Sleep
     // esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
 
-#ifdef SYSTEM_RAM_TEST
+#ifdef DEBUG_RAM_TEST
     app_fs_system_ram_test();
 #endif
 

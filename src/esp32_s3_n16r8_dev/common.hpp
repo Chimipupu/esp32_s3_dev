@@ -28,6 +28,25 @@
 #include "pcb_define.h"
 
 // -----------------------------------------------------------
+// [マクロ]
+
+// 8/16/32bitのR/Wマクロ
+#define MEM_READ_BYTE(base, offset)           (*(volatile uint8_t  *)((base) + (offset)))         // 8Bit  Read
+#define MEM_WRITE_BYTE(base, offset, val)     (*(volatile uint8_t  *)((base) + (offset)) = (val)) // 8Bit Write
+#define MEM_READ_WORD(base, offset)           (*(volatile uint16_t *)((base) + (offset)))         // 16Bit  Read
+#define MEM_WRITE_WORD(base, offset, val)     (*(volatile uint16_t *)((base) + (offset)) = (val)) // 16Bit Write
+#define MEM_READ_DWORD(base, offset)          (*(volatile uint32_t *)((base) + (offset)))         // 32Bit  Read
+#define MEM_WRITE_DWORD(base, offset, val)    (*(volatile uint32_t *)((base) + (offset)) = (val)) // 32Bit Write
+
+// ビット操作
+#define MEM_BIT_SET(reg, bit)                 ((reg) |=  (1UL << (bit))) // ビット　セット
+#define MEM_BIT_CLR(reg, bit)                 ((reg) &= ~(1UL << (bit))) // ビット　クリア
+#define MEM_BIT_TGL(reg, bit)                 ((reg) ^=  (1UL << (bit))) // ビット　トグル
+#define MEM_BIT_CHK(reg, bit)                 ((reg) &   (1UL << (bit))) // ビット　チェック
+
+// -----------------------------------------------------------
+// [Define]
+
 // 割込みマスク・許可
 #define __DI            portENTER_CRITICAL
 #define __EI            portEXIT_CRITICAL

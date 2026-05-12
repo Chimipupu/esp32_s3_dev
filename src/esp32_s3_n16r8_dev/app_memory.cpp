@@ -1,22 +1,26 @@
 /**
- * @file app_file_system.cpp
+ * @file app_memory.cpp
  * @author Chimipupu(https://github.com/Chimipupu)
- * @brief ファイルシステムのアプリ
+ * @brief アプリ用メモリ
  * @version 0.1
  * @date 2026-05-13
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
 
-#include "app_file_system.hpp"
+#include "app_memory.h"
 
+// -----------------------------------------------------------
 #define BUF_MAX_SIZE    (1024 * 32)
 
 static bool s_is_psram = false;
 static uint32_t s_heap_size = 0;
 static uint32_t s_free_size = 0;
-static void heap_print(uint8_t type);
+static void _heap_print(uint8_t type);
 
-static void heap_print(uint8_t type)
+// -----------------------------------------------------------
+// [Static]
+
+static void _heap_print(uint8_t type)
 {
     switch (type)
     {
@@ -39,19 +43,20 @@ static void heap_print(uint8_t type)
     }
 }
 
+// -----------------------------------------------------------
+// [API]
+
 /**
  * @brief ファイルシステム関連の情報表示
- * 
  */
 void app_fs_info(void)
 {
-    heap_print(HEAP_SRAM);
-    heap_print(HEAP_PSRAM);
+    _heap_print(HEAP_SRAM);
+    _heap_print(HEAP_PSRAM);
 }
 
 /**
  * @brief malloc(SRAM or PSRAM)のラッパー
- * 
  * @param size mallocするサイズ
  * @param type SRAM or PSRAM
  * @return void* mallocした領域
@@ -83,20 +88,19 @@ void* app_fs_heap_malloc(size_t size, uint8_t type)
 
 /**
  * @brief PSRAMの初期化
- * 
  */
 void app_fs_psram_init(void)
 {
     s_is_psram = psramInit();
     if (s_is_psram) {
         DBG_PRINTF("PSRAM Inited\n");
-        heap_print(HEAP_PSRAM);
+        _heap_print(HEAP_PSRAM);
     } else {
         DBG_PRINTF("This ESP32 is PSRAM does not exist\n");
     }
 }
 
-#ifdef SYSTEM_RAM_TEST
+#ifdef DEBUG_RAM_TEST
 static void ram_test_proc(uint8_t *p_heap)
 {
     uint32_t start_time, end_time;
@@ -152,7 +156,7 @@ static void ram_test_proc(uint8_t *p_heap)
 
 /**
  * @brief RAMテスト(SRAMとPSRAM)
- * */
+ */
 void app_fs_system_ram_test(void)
 {
     uint8_t *p_heap = NULL;
@@ -175,4 +179,4 @@ void app_fs_system_ram_test(void)
 
     DBG_PRINTF("=====================================\n");
 }
-#endif // SYSTEM_RAM_TEST
+#endif // DEBUG_RAM_TEST
