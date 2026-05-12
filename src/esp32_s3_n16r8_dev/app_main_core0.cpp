@@ -13,6 +13,11 @@
 #include "app_main_core0.hpp"
 #include "app_neopixel.hpp"
 
+// -----------------------------------------------------------
+#define TASK_RGBLED_DELAY_MS    (1000 / portTICK_PERIOD_MS)
+
+// -----------------------------------------------------------
+
 void core0RgbLedTask(void *p_parameter)
 {
     static uint8_t s_color = 0;
@@ -25,7 +30,10 @@ void core0RgbLedTask(void *p_parameter)
     {
         app_neopixel_set_color(0, s_color);
         s_color = (s_color + 1) % NEOPIXCEL_COLOR_OFF;
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        if(g_led_color_tbl[s_color].p_color_str != NULL) {
+            DBG_PRINTF("[Core0] RGBLED Color: %s\r\n", g_led_color_tbl[s_color].p_color_str);
+        }
+        vTaskDelay(TASK_RGBLED_DELAY_MS);
     }
 }
 

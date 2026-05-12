@@ -10,10 +10,16 @@
 #include "common.hpp"
 #include "app_main_core1.hpp"
 #include "app_memory.h"
+#include "app_ui.h"
 
-static xTaskHandle s_xTaskCore1WiFi;
+// -----------------------------------------------------------
+#if 0
 static xTaskHandle s_xTaskCore1Main;
+static xTaskHandle s_xTaskCore1WiFi;
+static xTaskHandle s_xTaskCore1Ui;
 static bool s_wifi_flg = true;
+#endif
+// -----------------------------------------------------------
 
 #if 0
 void vTaskCore1WiFi(void *p_parameter)
@@ -34,9 +40,7 @@ void vTaskCore1WiFi(void *p_parameter)
         vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }
-#endif
 
-#if 0
 void vTaskCore1Main(void *p_parameter)
 {
     // DBG_PRINTF("[Core1] vTaskCore1Main\n");
@@ -58,6 +62,17 @@ void vTaskCore1Main(void *p_parameter)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
+
+void vTaskCore1Ui(void *p_parameter)
+{
+    app_ui_init();
+
+    while (1)
+    {
+        app_ui_main();
+        vTaskDelay(300 / portTICK_PERIOD_MS);
+    }
+}
 #endif
 
 void app_main_init_core1(void)
@@ -76,16 +91,24 @@ void app_main_init_core1(void)
                             "vTaskCore1WiFi",   // タスク名
                             8192,              // スタック
                             NULL,              // パラメータ
-                            3,                 // 優先度(0～7、7が最優先)
+                            6,                 // 優先度(0～7、7が最優先)
                             &s_xTaskCore1WiFi, // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
 
     xTaskCreatePinnedToCore(vTaskCore1Main,   // コールバック関数ポインタ
                             "vTaskCore1Main", // タスク名
-                            16384,              // スタック
+                            2048,              // スタック
                             NULL,              // パラメータ
-                            6,                 // 優先度(0～7、7が最優先)
+                            3,                 // 優先度(0～7、7が最優先)
                             &s_xTaskCore1Main, // ハンドル
+                            CPU_CORE_1);       // Core0 or Core1
+
+    xTaskCreatePinnedToCore(vTaskCore1Main,   // コールバック関数ポインタ
+                            "vTaskCore1Main", // タスク名
+                            4096,              // スタック
+                            NULL,              // パラメータ
+                            1,                 // 優先度(0～7、7が最優先)
+                            &s_xTaskCore1Ui,   // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
 #endif
 }

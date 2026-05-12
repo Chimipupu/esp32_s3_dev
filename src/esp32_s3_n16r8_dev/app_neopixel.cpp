@@ -11,27 +11,26 @@
 #define COLOR_TBL_CNT    0x0A
 
 // LEDカラーテーブル
-const led_color_t g_led_color_tbl[] = {
-//   | R | G | B |
-    {255,   0,   0}, // 赤
-    {  0, 255,   0}, // 緑
-    {  0,   0, 255}, // 青
-    {255, 255, 255}, // 白
-    {255, 255,   0}, // 黄
-    {255,   0, 255}, // マゼンタ
-    {  0, 255, 255}, // シアン
-    {255, 165,   0}, // オレンジ
-    {128,   0, 128}, // パープル
-    {  0,   0,   0}  // オフ（黒）
-};
 
-Adafruit_NeoPixel g_pixel(RGBLED_NUM,
-                        RGBLED_PIN,
-                        NEO_GRB + NEO_KHZ800);
+const led_color_data_t g_led_color_tbl[] = {
+//     | R | G | B |
+    { {255,   0,   0}, "RED" },     // 赤
+    { {  0, 255,   0}, "GREEN" },   // 緑
+    { {  0,   0, 255}, "BLUE" },    // 青
+    { {255, 255, 255}, "WHITE" },   // 白
+    { {255, 255,   0}, "YELLOW" },  // 黄
+    { {255,   0, 255}, "MAGENTA" }, // マゼンタ
+    { {  0, 255, 255}, "CYAN" },    // シアン
+    { {255, 165,   0}, "ORANGE" },  // オレンジ
+    { {128,   0, 128}, "PURPLE" },  // パープル
+    { {  0,   0,   0}, "OFF" }      // オフ（黒）
+};
+const uint8_t LED_COLOR_TBL_SIZE = sizeof(g_led_color_tbl) / sizeof(g_led_color_tbl[0]);
+
+Adafruit_NeoPixel g_pixel(RGBLED_NUM, RGBLED_PIN, NEO_GRB + NEO_KHZ800);
 
 /**
  * @brief RGB LED 初期化
- * 
  */
 void app_neopixel_init(void)
 {
@@ -42,7 +41,6 @@ void app_neopixel_init(void)
 
 /**
  * @brief 指定のNeopixelの色を設定
- * 
  * @param led_no Neopixelの指定
  * @param p_rgb RGB色構造体ポインタ
  */
@@ -55,7 +53,6 @@ void app_neopixel_set_rgb(uint8_t led_no, led_color_t *p_rgb)
 
 /**
  * @brief 指定のNeopixelの色を設定
- * 
  * @param led_no Neopixelの指定
  * @param color 色の名前
  */
@@ -65,15 +62,15 @@ void app_neopixel_set_color(uint8_t led_no, uint8_t color)
     if(color < NEOPIXCEL_COLOR_OFF)
     {
         g_pixel.setPixelColor(led_no, g_pixel.Color(
-            LED_SCALE8(g_led_color_tbl[color].red),
-            LED_SCALE8(g_led_color_tbl[color].green),
-            LED_SCALE8(g_led_color_tbl[color].blue)
+            LED_SCALE8(g_led_color_tbl[color].rgb.red),
+            LED_SCALE8(g_led_color_tbl[color].rgb.green),
+            LED_SCALE8(g_led_color_tbl[color].rgb.blue)
             ));
     } else {
         g_pixel.setPixelColor(led_no, g_pixel.Color(
-            LED_SCALE8(g_led_color_tbl[NEOPIXCEL_COLOR_OFF].red),
-            LED_SCALE8(g_led_color_tbl[NEOPIXCEL_COLOR_OFF].green),
-            LED_SCALE8(g_led_color_tbl[NEOPIXCEL_COLOR_OFF].blue)
+            LED_SCALE8(g_led_color_tbl[NEOPIXCEL_COLOR_OFF].rgb.red),
+            LED_SCALE8(g_led_color_tbl[NEOPIXCEL_COLOR_OFF].rgb.green),
+            LED_SCALE8(g_led_color_tbl[NEOPIXCEL_COLOR_OFF].rgb.blue)
             ));
     }
     g_pixel.show();

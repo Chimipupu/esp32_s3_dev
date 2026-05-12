@@ -18,7 +18,6 @@
 
 // ------------------------------------------------------------------------------
 // [色テーブル関連]
-
 #define LED_SCALE8(v)               ((uint8_t)((((uint32_t)(v) * (MAX_BRIGHTNESS)) + 127) / 255))
 #define LED_RGB8_SCALED(r,g,b)      { LED_SCALE8(r), LED_SCALE8(g), LED_SCALE8(b) }
 
@@ -39,6 +38,13 @@ typedef struct {
     uint8_t blue;
 } led_color_t;
 
+typedef struct {
+    led_color_t rgb;
+    char *p_color_str;
+} led_color_data_t;
+
+extern const led_color_data_t g_led_color_tbl[];
+extern const uint8_t LED_COLOR_TBL_SIZE;
 // ------------------------------------------------------------------------------
 void app_neopixel_init(void);
 void app_neopixel_set_rgb(uint8_t led_no, led_color_t *p_rgb);
