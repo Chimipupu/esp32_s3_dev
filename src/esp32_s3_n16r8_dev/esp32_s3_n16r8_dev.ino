@@ -3,10 +3,8 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief Arduino IDE用ファイル
  * @version 0.1
- * @date 2026-01-26
- * 
+ * @date 2026-05-13
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
- * 
  */
 
 #include "common.hpp"
@@ -37,8 +35,8 @@ void vTaskCore0Main(void *p_parameter)
 // [CPU Core 1関連]
 void core1_init(void)
 {
-    // シリアル
-    Serial.begin(115200);
+    // UART初期化
+    Serial.begin(UART_BAUD);
     while (!Serial) {
         WDT_TOGGLE;
     }
@@ -47,8 +45,9 @@ void core1_init(void)
     // PSRAM初期化
     app_fs_psram_init();
 
-    // CPU Core 0関連初期化
+    // CPU Core 0 関連初期化
     app_main_init_core0();
+
 #if 0
     xTaskCreatePinnedToCore(vTaskCore0Main,    // コールバック関数ポインタ
                             "vTaskCore0Main",  // タスク名
@@ -59,7 +58,7 @@ void core1_init(void)
                             CPU_CORE_0);       // Core0 or Core1
 #endif
 
-    // CPU Core 1関連初期化
+    // CPU Core 1 関連初期化
     app_main_init_core1();
 }
 

@@ -3,10 +3,8 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief  Core0 アプリ
  * @version 0.1
- * @date 2026-01-26
- * 
+ * @date 2026-05-13
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
- * 
  */
 #ifndef APP_MAIN_CORE0_HPP
 #define APP_MAIN_CORE0_HPP

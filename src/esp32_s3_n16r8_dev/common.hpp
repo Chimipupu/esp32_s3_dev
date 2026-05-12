@@ -3,10 +3,8 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief 共通ヘッダー
  * @version 0.1
- * @date 2026-01-26
- * 
+ * @date 2026-05-13
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
- * 
  */
 
 #ifndef COMMON_HPP
@@ -26,10 +24,10 @@
 #include <task.h>
 #include <semphr.h>
 
-// GPIO
-#define RGBLED_PIN        48   // YD-ESP32-S3 RGBLED @GPIO 48
-#define BUTTON_PIN        46   // YD-ESP32-S3e Button @GPIO 41
+// 自前のヘッダ、ライブラリ
+#include "pcb_define.h"
 
+// -----------------------------------------------------------
 // 割込みマスク・許可
 #define __DI            portENTER_CRITICAL
 #define __EI            portEXIT_CRITICAL
@@ -71,6 +69,7 @@ extern SemaphoreHandle_t xSerialMutex;
 #endif
 #endif
 
+// -----------------------------------------------------------
 #ifndef NOP
 static inline void NOP(void)
 {
@@ -86,5 +85,7 @@ static inline void WDT_TOGGLE(void)
     asm volatile("nop");
 #endif /* __WDT_ENABLE__ */
 }
+
+// -----------------------------------------------------------
 
 #endif /* COMMON_HPP */

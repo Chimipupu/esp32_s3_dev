@@ -3,7 +3,7 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief  Core1 アプリ
  * @version 0.1
- * @date 2026-01-26
+ * @date 2026-05-13
  * 
  * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
  * 

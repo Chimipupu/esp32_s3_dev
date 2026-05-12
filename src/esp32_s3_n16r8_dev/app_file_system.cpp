@@ -3,10 +3,8 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief ファイルシステムのアプリ
  * @version 0.1
- * @date 2025-08-05
- * 
- * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
- * 
+ * @date 2026-05-13
+ * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
 
 #include "app_file_system.hpp"
