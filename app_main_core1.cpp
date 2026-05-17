@@ -15,32 +15,11 @@
 // -----------------------------------------------------------
 #if 0
 static xTaskHandle s_xTaskCore1Main;
-static xTaskHandle s_xTaskCore1WiFi;
 static xTaskHandle s_xTaskCore1Ui;
-static bool s_wifi_flg = true;
 #endif
 // -----------------------------------------------------------
 
 #if 0
-void vTaskCore1WiFi(void *p_parameter)
-{
-    DBG_PRINTF("[Core1] vTaskCore1WiFi\n");
-    app_neopixel_main(16, 0, 0, 0, true, false); // red
-    app_wifi_init();
-
-    while (1)
-    {
-        s_wifi_flg = app_wifi_main();
-
-        if(s_wifi_flg != true){
-            DBG_PRINTF("[Core1] vTaskCore1WiFi Suspend now!\n");
-            vTaskSuspend(NULL);
-            DBG_PRINTF("[Core1] vTaskCore1WiFi Resume!\n");
-        }
-        vTaskDelay(100 / portTICK_PERIOD_MS);
-    }
-}
-
 void vTaskCore1Main(void *p_parameter)
 {
     // DBG_PRINTF("[Core1] vTaskCore1Main\n");
@@ -87,14 +66,6 @@ void app_main_init_core1(void)
 #endif
 
 #if 0
-    xTaskCreatePinnedToCore(vTaskCore1WiFi,     // コールバック関数ポインタ
-                            "vTaskCore1WiFi",   // タスク名
-                            8192,              // スタック
-                            NULL,              // パラメータ
-                            6,                 // 優先度(0～7、7が最優先)
-                            &s_xTaskCore1WiFi, // ハンドル
-                            CPU_CORE_1);       // Core0 or Core1
-
     xTaskCreatePinnedToCore(vTaskCore1Main,   // コールバック関数ポインタ
                             "vTaskCore1Main", // タスク名
                             2048,              // スタック
@@ -103,8 +74,8 @@ void app_main_init_core1(void)
                             &s_xTaskCore1Main, // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
 
-    xTaskCreatePinnedToCore(vTaskCore1Main,   // コールバック関数ポインタ
-                            "vTaskCore1Main", // タスク名
+    xTaskCreatePinnedToCore(vTaskCore1Ui,      // コールバック関数ポインタ
+                            "vTaskCore1Ui",    // タスク名
                             4096,              // スタック
                             NULL,              // パラメータ
                             1,                 // 優先度(0～7、7が最優先)
