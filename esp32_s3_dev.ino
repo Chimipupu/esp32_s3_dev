@@ -1,5 +1,5 @@
 /**
- * @file esp32_s3_n16r8_dev.ino
+ * @file esp32_s3_dev.ino
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief Arduino IDE用ファイル
  * @version 0.1
