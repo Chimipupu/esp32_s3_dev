@@ -83,7 +83,7 @@ void app_main_init_core1(void)
     // esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
 
 #ifdef DEBUG_RAM_TEST
-    app_fs_system_ram_test();
+    app_mem_test();
 #endif
 
 #if 0

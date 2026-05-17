@@ -20,7 +20,6 @@
 
 // -----------------------------------------------------------
 // [コンパイルスイッチ]
-#define DEBUG_RAM_TEST // RAMテスト(SRAM, PSRAM)
 
 // -----------------------------------------------------------
 // [Define]
@@ -33,13 +32,9 @@
 #define PSRAM_MALLOC_TEST_SIZE    8
 
 // -----------------------------------------------------------
-void app_fs_info(void);
-void* app_fs_heap_malloc(size_t size, uint8_t type);
-void app_fs_psram_init(void);
-
-#ifdef DEBUG_RAM_TEST
-void app_fs_system_ram_test(void);
-#endif
+void app_mem_info(void);
+void* app_mem_heap_malloc(size_t size, uint8_t type);
+void app_mem_psram_init(void);
 
 // -----------------------------------------------------------
 

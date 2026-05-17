@@ -43,7 +43,8 @@ void core1_init(void)
     DBG_PRINTF("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
 
     // PSRAM初期化
-    app_fs_psram_init();
+    app_mem_psram_init();
+    app_mem_info();
 
     // CPU Core 0 関連初期化
     app_main_init_core0();

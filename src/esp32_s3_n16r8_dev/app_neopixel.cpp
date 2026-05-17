@@ -6,10 +6,11 @@
  * @date 2026-05-13
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
+
 #include "app_neopixel.hpp"
+#include "app_memory.h"
 
-#define COLOR_TBL_CNT    0x0A
-
+// -----------------------------------------------------------
 // LEDカラーテーブル
 const led_color_data_t g_led_color_tbl[] = {
 //      |  R  |  G  |  B  |
@@ -43,48 +44,109 @@ const led_color_data_t g_led_color_tbl[] = {
 };
 const uint8_t LED_COLOR_TBL_SIZE = sizeof(g_led_color_tbl) / sizeof(g_led_color_tbl[0]);
 
-Adafruit_NeoPixel g_pixel(RGBLED_NUM, RGBLED_PIN, NEO_GRB + NEO_KHZ800);
+static Adafruit_NeoPixel *s_p_pixel = NULL;
+static uint8_t s_led_num = 0;
+static uint8_t s_brightness = 0;
+static led_color_t *s_p_rgb_buf = NULL;
+
+static void _set_rgb(uint8_t led_no, led_color_t *rgb, uint8_t brightness);
+// -----------------------------------------------------------
+// [Static]
+
+static void _set_rgb(uint8_t led_no, led_color_t *p_rgb, uint8_t brightness)
+{
+if (s_p_pixel == NULL) {
+        return;
+    }
+
+    s_p_pixel->clear();
+    s_p_pixel->setPixelColor(led_no, s_p_pixel->Color(p_rgb->red,
+                                                p_rgb->green,
+                                                p_rgb->blue));
+    s_p_pixel->setBrightness(brightness);
+    s_p_pixel->show();
+}
+// -----------------------------------------------------------
+// [API]
 
 /**
- * @brief RGB LED 初期化
+ * @brief RGBLED(Neopixel)の初期化
+ * @param led_num LEDの数
  */
-void app_neopixel_init(void)
+void app_neopixel_init(uint8_t led_num, uint8_t brightness)
 {
-    g_pixel.begin();
-    g_pixel.clear();
-    g_pixel.show();
+    s_led_num = led_num;
+    s_brightness = brightness;
+
+    if (s_p_pixel != NULL) {
+        delete s_p_pixel;
+    }
+
+    if (s_p_rgb_buf != NULL) {
+        heap_caps_free(s_p_rgb_buf);
+    }
+
+    // NeoPixelオブジェクトを生成
+    s_p_pixel = new Adafruit_NeoPixel(s_led_num, RGBLED_PIN, NEO_GRB + NEO_KHZ800);
+
+    // PSRAMにバッファを動的確保
+    s_p_rgb_buf = (led_color_t *)app_mem_heap_malloc(sizeof(led_color_t) * s_led_num, HEAP_PSRAM_8BIT);
+
+    s_p_pixel->begin();
+    s_p_pixel->clear();
+    s_p_pixel->show();
 }
 
 /**
- * @brief 指定のNeopixelの色を設定
- * @param led_no Neopixelの指定
- * @param p_rgb RGB色構造体ポインタ
+ * @brief 指定のLEDの色をRGBで設定
+ * @param led_no LEDの指定
+ * @param p_rgb RGB構造体ポインタ
  */
 void app_neopixel_set_rgb(uint8_t led_no, led_color_t *p_rgb)
 {
-    g_pixel.clear();
-    g_pixel.setPixelColor(led_no, g_pixel.Color(p_rgb->red, p_rgb->green, p_rgb->blue));
-    g_pixel.show();
+    if(p_rgb == NULL) {
+        return;
+    }
+
+    _set_rgb(led_no, p_rgb, s_brightness);
 }
 
 /**
- * @brief 指定のNeopixelの色を設定
- * @param led_no Neopixelの指定
- * @param color 色の名前
+ * @brief 指定のLEDの色を色名で設定
+ * @param led_no LEDの指定
+ * @param color 色名
  */
 void app_neopixel_set_color(uint8_t led_no, uint8_t color)
 {
-    g_pixel.clear();
-
     if(color > LED_COLOR_TBL_SIZE) {
         return;
     }
 
-    g_pixel.setPixelColor(led_no, g_pixel.Color(
-        LED_SCALE8(g_led_color_tbl[color].rgb.red),
-        LED_SCALE8(g_led_color_tbl[color].rgb.green),
-        LED_SCALE8(g_led_color_tbl[color].rgb.blue)
-    ));
+    _set_rgb(led_no, (led_color_t *) &g_led_color_tbl[color].rgb, s_brightness);
+}
 
-    g_pixel.show();
+/**
+ * @brief 指定のLEDの色をフルカラーで回転させる
+ * @param led_no LEDの指定
+ */
+void app_neopixel_rgb_illumination(uint8_t led_no)
+{
+    static uint8_t s_idx = 0;
+
+    if(((led_no + 1) > s_led_num) || (s_p_rgb_buf == NULL)) {
+        return;
+    }
+
+    s_p_rgb_buf[led_no] = g_led_color_tbl[s_idx].rgb;
+    app_neopixel_set_rgb(led_no, &s_p_rgb_buf[led_no]);
+    s_idx = (s_idx + 1) % LED_COLOR_TBL_SIZE;
+}
+
+/**
+ * @brief LEDの輝度変更
+ * @param brightness 輝度(0~255)
+ */
+void app_neopixel_set_brightness(uint8_t brightness)
+{
+    s_brightness = brightness;
 }

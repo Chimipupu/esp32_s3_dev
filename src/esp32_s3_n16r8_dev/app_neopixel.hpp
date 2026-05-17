@@ -12,15 +12,13 @@
 #include "common.hpp"
 #include <Adafruit_NeoPixel.h>
 
-#define MAX_BRIGHTNESS          32  // 最大輝度
-#define LED_COLOR_ON_TIMER      100 // 1色の表示時間
-#define RGBLED_NUM              1   // RGB LEDの数
+// ------------------------------------------------------------------------------
+#define RGBLED_NUM               1   // RGBLEDの数
+#define RGBLED_MAX_BRIGHTNESS    16  // RGBLEDの最大輝度
+#define RGBLED_COLOR_ON_TIMER    100 // RGBLEDの1色の表示時間
 
 // ------------------------------------------------------------------------------
 // [色テーブル関連]
-#define LED_SCALE8(v)               ((uint8_t)((((uint32_t)(v) * (MAX_BRIGHTNESS)) + 127) / 255))
-#define LED_RGB8_SCALED(r,g,b)      { LED_SCALE8(r), LED_SCALE8(g), LED_SCALE8(b) }
-
 #define NEOPIXCEL_COLOR_RED         0x00 // 赤
 #define NEOPIXCEL_COLOR_GREEN       0x01 // 緑
 #define NEOPIXCEL_COLOR_BLUE        0x02 // 青
@@ -46,8 +44,10 @@ typedef struct {
 extern const led_color_data_t g_led_color_tbl[];
 extern const uint8_t LED_COLOR_TBL_SIZE;
 // ------------------------------------------------------------------------------
-void app_neopixel_init(void);
+void app_neopixel_init(uint8_t led_num, uint8_t brightness);
 void app_neopixel_set_rgb(uint8_t led_no, led_color_t *p_rgb);
 void app_neopixel_set_color(uint8_t led_no, uint8_t color);
+void app_neopixel_rgb_illumination(uint8_t led_no);
+void app_neopixel_set_brightness(uint8_t brightness);
 
 #endif /* APP_NEOPIXEL_HPP */

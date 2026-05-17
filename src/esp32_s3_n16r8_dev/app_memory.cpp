@@ -50,12 +50,15 @@ static void _heap_print(uint8_t type)
 // [API]
 
 /**
- * @brief ファイルシステム関連の情報表示
+ * @brief メモリ情報表示
  */
-void app_fs_info(void)
+void app_mem_info(void)
 {
     _heap_print(HEAP_SRAM);
-    _heap_print(HEAP_PSRAM);
+
+    if (s_is_psram == true) {
+        _heap_print(HEAP_PSRAM);
+    }
 }
 
 /**
@@ -64,7 +67,7 @@ void app_fs_info(void)
  * @param type SRAM or PSRAM
  * @return void* mallocした領域
  */
-void* app_fs_heap_malloc(size_t size, uint8_t type)
+void* app_mem_heap_malloc(size_t size, uint8_t type)
 {
     void *p_malloc = NULL;
 
@@ -92,99 +95,12 @@ void* app_fs_heap_malloc(size_t size, uint8_t type)
 /**
  * @brief PSRAMの初期化
  */
-void app_fs_psram_init(void)
+void app_mem_psram_init(void)
 {
     s_is_psram = psramInit();
     if (s_is_psram) {
         DBG_PRINTF("PSRAM Inited\n");
-        _heap_print(HEAP_PSRAM);
     } else {
         DBG_PRINTF("This ESP32 is PSRAM does not exist\n");
     }
 }
-
-#ifdef DEBUG_RAM_TEST
-static void ram_test_proc(uint8_t *p_heap)
-{
-    uint32_t start_time, end_time;
-    float time_ms;
-    float speed_mbs;
-    uint8_t tmp = 0;
-    uint32_t rand_idx = 0;
-    uint32_t i;
-
-    if (p_heap != NULL) {
-        // -------------------------------------------------------------------------------
-        // 書き込みテスト(シーケンシャル)
-        start_time = micros();
-        for (size_t i = 0; i < BUF_MAX_SIZE; i++) {
-            p_heap[i] = (uint8_t)(i & 0xFF);
-        }
-        end_time = micros();
-
-        time_ms = (end_time - start_time) / 1000.0;
-        speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
-        DBG_PRINTF("  Write (Seq) : %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
-        // -------------------------------------------------------------------------------
-        // シーケンシャルリードテスト
-        start_time = micros();
-        for (i = 0; i < BUF_MAX_SIZE; i++)
-        {
-            tmp = p_heap[i];
-        }
-        end_time = micros();
-
-        time_ms = (end_time - start_time) / 1000.0;
-        speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
-        DBG_PRINTF("  Read  (Seq) : %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
-
-        // -------------------------------------------------------------------------------
-        // ランダムリードテスト
-        rand_idx = 0;
-        start_time = micros();
-        for (i = 0; i < (BUF_MAX_SIZE / 2); i++)
-        {
-            rand_idx = (rand_idx + 2) & (BUF_MAX_SIZE - 1);
-            tmp = p_heap[rand_idx];
-        }
-        end_time = micros();
-
-        time_ms = (end_time - start_time) / 1000.0;
-        speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
-        DBG_PRINTF("  Read  (Rand): %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
-
-        free(p_heap);
-
-        rand_idx = tmp; // tmpのワーニング対策(not used)
-        // -------------------------------------------------------------------------------
-    } else {
-        DBG_PRINTF("Malloc Failed (Not enough heap)\n");
-    }
-}
-
-/**
- * @brief RAMテスト(SRAMとPSRAM)
- */
-void app_fs_system_ram_test(void)
-{
-    uint8_t *p_heap = NULL;
-
-    DBG_PRINTF("=====================================\n");
-    DBG_PRINTF("   ESP32-S3 Memory Benchmark (Size: %d KB)\n", BUF_MAX_SIZE / 1024);
-    DBG_PRINTF("=====================================\n");
-
-    DBG_PRINTF("[SRAM Test]\n");
-    p_heap = (uint8_t *)heap_caps_malloc(BUF_MAX_SIZE, MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-    ram_test_proc(p_heap);
-
-    DBG_PRINTF("-------------------------------------\n");
-    s_is_psram = psramFound();
-    if (s_is_psram) {
-        DBG_PRINTF("[PSRAM Test]\n");
-        p_heap = (uint8_t *)app_fs_heap_malloc(BUF_MAX_SIZE, HEAP_PSRAM_8BIT);
-        ram_test_proc(p_heap);
-    }
-
-    DBG_PRINTF("=====================================\n");
-}
-#endif // DEBUG_RAM_TEST
