@@ -18,17 +18,13 @@
 #include <stdbool.h>
 
 // -----------------------------------------------------------
-typedef struct {
-    wifi_auth_mode_t auth_mode;
-    char *p_auth_str;
-} app_wifi_auth_data_t;
+#define MY_WIFI_SSID       "YOUR-WIFI-SSID"     // WiFiのSSID
+#define MY_WIFI_PASSWORD   "YOUR-WIFI-PASSWORD" // WiFiのパスワード
 
-extern const app_wifi_auth_data_t g_wifi_auth_data_tbl[];
-extern const uint8_t WIFI_AUTH_DATA_TBL_SIZE;
-
+#define NTP_TIMEZONE_JST    (9 * 3600) // 日本標準時のタイムゾーン（UTC+9）
 // -----------------------------------------------------------
 void app_wifi_scan(void);
-void app_wifi_init(void);
+void app_wifi_init(const char *p_ssid, const char *p_password);
 void app_wifi_main(void);
 
 #endif // APP_WIFI_H

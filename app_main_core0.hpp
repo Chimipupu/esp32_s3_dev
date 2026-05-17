@@ -6,6 +6,7 @@
  * @date 2026-05-13
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
+
 #ifndef APP_MAIN_CORE0_HPP
 #define APP_MAIN_CORE0_HPP
 

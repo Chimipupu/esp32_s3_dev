@@ -4,9 +4,7 @@
  * @brief  Core1 アプリ
  * @version 0.1
  * @date 2026-05-13
- * 
  * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
- * 
  */
 
 #include "common.hpp"
@@ -16,8 +14,8 @@
 #include "app_wifi.h"
 
 // -----------------------------------------------------------
-#define TASK_RGBLED_DELAY_MS    (1000 / portTICK_PERIOD_MS)
-#define TASK_WIFI_DELAY_MS      (5000 / portTICK_PERIOD_MS)
+#define TASK_RGBLED_DELAY_MS    (500 / portTICK_PERIOD_MS)
+#define TASK_WIFI_DELAY_MS      (1000 / portTICK_PERIOD_MS)
 
 static xTaskHandle vTaskCore0Led_Handle;
 static xTaskHandle s_xTaskCore0WiFi_Handle;
@@ -40,7 +38,7 @@ void vTaskCore0Led(void *p_parameter)
 void vTaskCore0WiFi(void *p_parameter)
 {
     // DBG_PRINTF("[Core0] vTaskCore0WiFi\n");
-    app_wifi_init();
+    app_wifi_init(MY_WIFI_SSID, MY_WIFI_PASSWORD);
     s_wifi_flg = true;
 
     while (1)
