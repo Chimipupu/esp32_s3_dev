@@ -16,6 +16,7 @@
 // -----------------------------------------------------------
 #define TASK_RGBLED_DELAY_MS    (1000 / portTICK_PERIOD_MS)
 
+static led_color_t s_rgb;
 // -----------------------------------------------------------
 
 void core0RgbLedTask(void *p_parameter)
@@ -28,11 +29,15 @@ void core0RgbLedTask(void *p_parameter)
 
     while (1)
     {
-        app_neopixel_set_color(0, s_color);
-        s_color = (s_color + 1) % NEOPIXCEL_COLOR_OFF;
+        s_rgb = g_led_color_tbl[s_color].rgb;
+        app_neopixel_set_rgb(0, &s_rgb);
+#if 1
         if(g_led_color_tbl[s_color].p_color_str != NULL) {
             DBG_PRINTF("[Core0] RGBLED Color: %s\r\n", g_led_color_tbl[s_color].p_color_str);
         }
+#endif
+        s_color = (s_color + 1) % LED_COLOR_TBL_SIZE;
+
         vTaskDelay(TASK_RGBLED_DELAY_MS);
     }
 }

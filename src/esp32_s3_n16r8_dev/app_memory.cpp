@@ -10,7 +10,10 @@
 #include "app_memory.h"
 
 // -----------------------------------------------------------
-#define BUF_MAX_SIZE    (1024 * 32)
+// NOTE: キャッシュサイズは32KB
+#define BUF_MAX_SIZE    (32 *1024)
+// #define BUF_MAX_SIZE    (64 *1024)
+// #define BUF_MAX_SIZE    (128 *1024)
 
 static bool s_is_psram = false;
 static uint32_t s_heap_size = 0;
@@ -27,15 +30,15 @@ static void _heap_print(uint8_t type)
         case HEAP_SRAM:
             s_heap_size = ESP.getHeapSize();
             s_free_size = ESP.getFreeHeap();
-            DBG_PRINTF("SRAM Heap Size: %d Byte\n", s_heap_size);
-            DBG_PRINTF("SRAM Heap Free: %d Byte\n", s_free_size);
+            DBG_PRINTF("SRAM Heap Size: %lu Byte\n", s_heap_size);
+            DBG_PRINTF("SRAM Heap Free: %lu Byte\n", s_free_size);
             break;
 
         case HEAP_PSRAM:
             s_heap_size = ESP.getPsramSize();
             s_free_size = ESP.getFreePsram();
-            DBG_PRINTF("PSRAM Heap Size: %d Byte\n", s_heap_size);
-            DBG_PRINTF("PSRAM Heap Free: %d Byte\n", s_free_size);
+            DBG_PRINTF("PSRAM Heap Size: %lu Byte\n", s_heap_size);
+            DBG_PRINTF("PSRAM Heap Free: %lu Byte\n", s_free_size);
             break;
 
         default:
@@ -106,12 +109,13 @@ static void ram_test_proc(uint8_t *p_heap)
     uint32_t start_time, end_time;
     float time_ms;
     float speed_mbs;
-    volatile uint8_t read_temp;
+    uint8_t tmp = 0;
     uint32_t rand_idx = 0;
     uint32_t i;
 
     if (p_heap != NULL) {
-        // --- Write Test (Sequential) ---
+        // -------------------------------------------------------------------------------
+        // 書き込みテスト(シーケンシャル)
         start_time = micros();
         for (size_t i = 0; i < BUF_MAX_SIZE; i++) {
             p_heap[i] = (uint8_t)(i & 0xFF);
@@ -121,12 +125,12 @@ static void ram_test_proc(uint8_t *p_heap)
         time_ms = (end_time - start_time) / 1000.0;
         speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
         DBG_PRINTF("  Write (Seq) : %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
-
-        // --- Read Test (Sequential) ---
+        // -------------------------------------------------------------------------------
+        // シーケンシャルリードテスト
         start_time = micros();
         for (i = 0; i < BUF_MAX_SIZE; i++)
         {
-            read_temp = p_heap[i];
+            tmp = p_heap[i];
         }
         end_time = micros();
 
@@ -134,13 +138,14 @@ static void ram_test_proc(uint8_t *p_heap)
         speed_mbs = (BUF_MAX_SIZE / 1024.0 / 1024.0) / (time_ms / 1000.0);
         DBG_PRINTF("  Read  (Seq) : %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
 
-        // --- Read Test (Random) ---
+        // -------------------------------------------------------------------------------
+        // ランダムリードテスト
         rand_idx = 0;
         start_time = micros();
         for (i = 0; i < (BUF_MAX_SIZE / 2); i++)
         {
             rand_idx = (rand_idx + 2) & (BUF_MAX_SIZE - 1);
-            read_temp = p_heap[rand_idx];
+            tmp = p_heap[rand_idx];
         }
         end_time = micros();
 
@@ -149,6 +154,9 @@ static void ram_test_proc(uint8_t *p_heap)
         DBG_PRINTF("  Read  (Rand): %.2f ms | Speed: %.2f MB/s\n", time_ms, speed_mbs);
 
         free(p_heap);
+
+        rand_idx = tmp; // tmpのワーニング対策(not used)
+        // -------------------------------------------------------------------------------
     } else {
         DBG_PRINTF("Malloc Failed (Not enough heap)\n");
     }

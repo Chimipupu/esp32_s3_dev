@@ -40,7 +40,7 @@ typedef struct {
 
 typedef struct {
     led_color_t rgb;
-    char *p_color_str;
+    const char *p_color_str;
 } led_color_data_t;
 
 extern const led_color_data_t g_led_color_tbl[];

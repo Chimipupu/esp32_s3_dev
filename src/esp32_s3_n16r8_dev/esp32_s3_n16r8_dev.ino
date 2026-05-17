@@ -15,7 +15,7 @@
 SemaphoreHandle_t xSerialMutex;
 portMUX_TYPE g_mux = portMUX_INITIALIZER_UNLOCKED;
 
-// ====================================================================
+// -----------------------------------------------------------
 // [CPU Core 0関連]
 #if 0
 // CPU Core0
@@ -31,15 +31,15 @@ void vTaskCore0Main(void *p_parameter)
 }
 #endif
 
-// ====================================================================
+// -----------------------------------------------------------
 // [CPU Core 1関連]
 void core1_init(void)
 {
     // UART初期化
     Serial.begin(UART_BAUD);
-    while (!Serial) {
-        WDT_TOGGLE;
-    }
+    // while (!Serial) {
+    //     WDT_TOGGLE;
+    // }
     DBG_PRINTF("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
 
     // PSRAM初期化
