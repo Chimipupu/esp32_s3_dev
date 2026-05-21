@@ -34,9 +34,9 @@
 
 #define UART_0_TX_PIN     43 // UART0 TX  @GPIO 43
 #define UART_0_RX_PIN     44 // UART0 RX  @GPIO 44
-#define UART_1_TX_PIN     17 // UART0 TX  @GPIO 43
-#define UART_1_RX_PIN     18 // UART0 RX  @GPIO 44
-#define OB_RGBLED_PIN        48 // RGBLED    @GPIO 48
+#define UART_1_TX_PIN     17 // UART1 TX  @GPIO 43
+#define UART_1_RX_PIN     18 // UART1 RX  @GPIO 44
+#define OB_RGBLED_PIN     48 // RGBLED    @GPIO 48
 #define BUTTON_PIN        46 // Button    @GPIO 41
 #define SPI_MOSI_PIN      11 // SPI MOSI  @GPIO 11 (FSPID)
 #define SPI_MISO_PIN      13 // SPI MISO  @GPIO 13 (FSPIQ)

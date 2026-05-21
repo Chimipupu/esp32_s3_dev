@@ -11,12 +11,14 @@
 #include "app_main_core1.hpp"
 #include "app_memory.h"
 #include "app_ui.h"
+#include "app_wifi.h"
 
 // -----------------------------------------------------------
 #if 0
 static xTaskHandle s_xTaskCore1Main;
 static xTaskHandle s_xTaskCore1Ui;
 #endif
+static xTaskHandle s_xTaskCore1WiFi_Handle;
 // -----------------------------------------------------------
 
 #if 0
@@ -56,7 +58,7 @@ void vTaskCore1Ui(void *p_parameter)
 
 void app_main_init_core1(void)
 {
-    xSerialMutex = xSemaphoreCreateMutex();
+    // xSerialMutex = xSemaphoreCreateMutex();
 
     // Deep Sleep
     // esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
@@ -82,6 +84,14 @@ void app_main_init_core1(void)
                             &s_xTaskCore1Ui,   // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
 #endif
+
+    xTaskCreatePinnedToCore(vTaskCore1WiFi,    // コールバック関数ポインタ
+                            "vTaskCore1WiFi",  // タスク名
+                            9192,              // スタック
+                            NULL,              // パラメータ
+                            6,                 // 優先度(0～7、7が最優先)
+                            &s_xTaskCore1WiFi_Handle, // ハンドル
+                            CPU_CORE_1);       // Core0 or Core1
 }
 
 void app_main_core1(void)

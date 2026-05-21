@@ -18,18 +18,6 @@
 #define RGBLED_COLOR_ON_TIMER    100 // RGBLEDの1色の表示時間
 
 // ------------------------------------------------------------------------------
-// [色テーブル関連]
-#define NEOPIXCEL_COLOR_RED         0x00 // 赤
-#define NEOPIXCEL_COLOR_GREEN       0x01 // 緑
-#define NEOPIXCEL_COLOR_BLUE        0x02 // 青
-#define NEOPIXCEL_COLOR_WHITE       0x03 // 白
-#define NEOPIXCEL_COLOR_YELLOW      0x04 // 黄
-#define NEOPIXCEL_COLOR_MAGENTA     0x05 // マゼンタ
-#define NEOPIXCEL_COLOR_CYAN        0x06 // シアン
-#define NEOPIXCEL_COLOR_ORANGE      0x07 // オレンジ
-#define NEOPIXCEL_COLOR_PURPLE      0x08 // パープル
-#define NEOPIXCEL_COLOR_OFF         0x09 // オフ（黒）
-
 typedef struct {
     uint8_t red;
     uint8_t green;
@@ -46,7 +34,6 @@ extern const uint8_t LED_COLOR_TBL_SIZE;
 // ------------------------------------------------------------------------------
 void app_neopixel_init(uint8_t led_num, uint8_t brightness);
 void app_neopixel_set_rgb(uint8_t led_no, led_color_t *p_rgb);
-void app_neopixel_set_color(uint8_t led_no, uint8_t color);
 void app_neopixel_rgb_illumination(uint8_t led_no);
 void app_neopixel_set_brightness(uint8_t brightness);
 

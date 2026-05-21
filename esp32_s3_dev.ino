@@ -37,10 +37,6 @@ void core1_init(void)
 {
     // UART初期化
     Serial.begin(UART_BAUD);
-    // while (!Serial) {
-    //     WDT_TOGGLE;
-    // }
-    DBG_PRINTF("\n[DEBUG] ESP32-S3 N16R8 Develop\n");
 
     // PSRAM初期化
     app_mem_psram_init();
