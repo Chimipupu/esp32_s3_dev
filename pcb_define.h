@@ -12,17 +12,31 @@
 
 // -----------------------------------------------------------
 // [コンパイルスイッチ]
-#define PCB_YD_ESP32_S3
+// #define PCB_YD_ESP32_S3
+#define PCB_ESP32_S3_SUPER_MINI
 
 // -----------------------------------------------------------
+#ifdef PCB_ESP32_S3_SUPER_MINI
+// NOTE: ESP32-S3FH4R2: 4MBのフラッシュ(QPI)、2MBのPSRAM(QPI)をSoC内でSiPで接続済み
+#define PSRAM_SIZE_BYTE   (2 * 1024 * 1024)
+#define FLASH_SIZE_BYTE   (4 * 1024 * 1024)
+
+// NOTE: オンボード赤色LEDとRGBLEDは同じ　「GPIO 48」！(同じピンにするなやw)
+#define OB_LED_PIN        48 // オンボード赤色LED    @GPIO 48
+#define OB_RGBLED_PIN     48 // オンボードRGBLED @GPIO 48
+#define UART_BAUD         115200
+#endif // PCB_ESP32_S3_SUPER_MINI
+
 #ifdef PCB_YD_ESP32_S3
-// [基板定義(YD-ESP32-S3)]
-// NOTE: ESP32-S3はI2C、I2SのGPIOを自由に割り当て可能
+// NOTE: ESP32-S3 N16R8: 外付けフラッシュ 16MB(QSPI)、SoC内でSiPで8MBのPSRAM(OPI)
+#define PSRAM_SIZE_BYTE   (8  * 1024 * 1024)
+#define FLASH_SIZE_BYTE   (16 * 1024 * 1024)
+
 #define UART_0_TX_PIN     43 // UART0 TX  @GPIO 43
 #define UART_0_RX_PIN     44 // UART0 RX  @GPIO 44
 #define UART_1_TX_PIN     17 // UART0 TX  @GPIO 43
 #define UART_1_RX_PIN     18 // UART0 RX  @GPIO 44
-#define RGBLED_PIN        48 // RGBLED    @GPIO 48
+#define OB_RGBLED_PIN        48 // RGBLED    @GPIO 48
 #define BUTTON_PIN        46 // Button    @GPIO 41
 #define SPI_MOSI_PIN      11 // SPI MOSI  @GPIO 11 (FSPID)
 #define SPI_MISO_PIN      13 // SPI MISO  @GPIO 13 (FSPIQ)

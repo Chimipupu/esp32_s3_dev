@@ -87,7 +87,7 @@ void app_neopixel_init(uint8_t led_num, uint8_t brightness)
     }
 
     // NeoPixelオブジェクトを生成
-    s_p_pixel = new Adafruit_NeoPixel(s_led_num, RGBLED_PIN, NEO_GRB + NEO_KHZ800);
+    s_p_pixel = new Adafruit_NeoPixel(s_led_num, OB_RGBLED_PIN, NEO_GRB + NEO_KHZ800);
 
     // PSRAMにバッファを動的確保
     s_p_rgb_buf = (led_color_t *)app_mem_heap_malloc(sizeof(led_color_t) * s_led_num, HEAP_PSRAM_8BIT);

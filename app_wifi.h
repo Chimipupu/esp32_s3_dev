@@ -21,6 +21,10 @@
 #define MY_WIFI_SSID       "YOUR-WIFI-SSID"     // WiFiのSSID
 #define MY_WIFI_PASSWORD   "YOUR-WIFI-PASSWORD" // WiFiのパスワード
 
+#if !defined(MY_WIFI_SSID) || !defined(MY_WIFI_PASSWORD)
+#error "[ERROR] Please define Your Wifi SSID and Password in app_wifi.h"
+#endif
+
 #define NTP_TIMEZONE_JST    (9 * 3600) // 日本標準時のタイムゾーン（UTC+9）
 // -----------------------------------------------------------
 void app_wifi_scan(void);

@@ -11,7 +11,7 @@
 
 // -----------------------------------------------------------
 // NOTE: キャッシュサイズは32KB
-#define BUF_MAX_SIZE    (32 *1024)
+// #define BUF_MAX_SIZE    (32 *1024)
 // #define BUF_MAX_SIZE    (64 *1024)
 // #define BUF_MAX_SIZE    (128 *1024)
 
