@@ -65,8 +65,13 @@ void app_main_init_core1(void)
 {
     // xSerialMutex = xSemaphoreCreateMutex();
 
+    // Deep Sleepからの起床確認
+    if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) {
+        DBG_PRINTF("[Core1] Wakeup from DeepSleep! zzz\n");
+    }
+
     // Deep Sleep
-    // esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
+    esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
 
 #ifdef DEBUG_RAM_TEST
     app_mem_test();
