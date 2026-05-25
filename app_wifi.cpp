@@ -11,7 +11,9 @@
 #include "time.h"
 
 // -----------------------------------------------------------
-#define TASK_WIFI_DELAY_MS      (10000 / portTICK_PERIOD_MS)
+#define TASK_WIFI_DELAY_MS      (1000 / portTICK_PERIOD_MS)
+
+bool is_wifi_task_all_proc_end = false;
 
 typedef struct {
     wifi_auth_mode_t auth_mode;
@@ -47,8 +49,20 @@ static bool s_ntp_sync = false;
 static void _wifi_disconnet(void);
 static bool _get_wifi_auth_mode_data(wifi_auth_mode_t auth_mode);
 static void _get_ntp_time(void);
+static void _printf_wifi_connect_info(void);
 // -----------------------------------------------------------
 // [Static]
+
+static void _printf_wifi_connect_info(void)
+{
+    if(WiFi.status() == WL_CONNECTED)
+    {
+        Serial.printf("WiFi SSID: %s\r\n", MY_WIFI_SSID);
+        Serial.printf("WiFi Password: %s\r\n", MY_WIFI_PASSWORD);
+        Serial.printf("WiFi IP: %s\r\n", WiFi.localIP().toString().c_str());
+        Serial.printf("WiFi RSSI: %d dBm\r\n", WiFi.RSSI());
+    }
+}
 
 static void _wifi_disconnet(void)
 {
@@ -96,7 +110,6 @@ static void _get_ntp_time(void)
         } else {
             // UTCからJSTに変換
             sp_jst_tm = localtime_r(&s_utc_time, &jst_tm);
-
             s_ntp_sync = true;
             Serial.printf("\r\nRTC Sync Succes\r\n");
 
@@ -175,7 +188,30 @@ void app_wifi_init(const char *p_ssid, const char *p_password)
 
 void app_wifi_main(void)
 {
-    // TODO
+    s_is_wifi_connet = (WiFi.status() == WL_CONNECTED) ? true : false;
+
+    if(s_is_wifi_connet == true) {
+        _printf_wifi_connect_info();
+
+        if(s_ntp_sync == false) {
+            app_wifi_ntp_sync();
+        }
+    } else {
+        app_wifi_init(MY_WIFI_SSID, MY_WIFI_PASSWORD);
+    }
+
+    if(s_ntp_sync == true) {
+        Serial.printf("WiFi Disconnected\r\n");
+        app_wifi_disconnet();
+        s_is_wifi_connet = false;
+        s_ntp_sync = false;
+
+        is_wifi_task_all_proc_end = true;
+
+        // 仕事が全部終わったからタスクを停止
+        Serial.printf("All Work End! WiFi Task Suspend zzz\r\n");
+        vTaskSuspend(NULL);
+    }
 }
 
 void app_wifi_ntp_sync(void)
@@ -195,28 +231,17 @@ void app_wifi_disconnet(void)
 
 void vTaskCore1WiFi(void *p_parameter)
 {
+    static uint8_t s_temp_avg_cnt;
+    static float s_temp_buf[10] = {0};
+    static float s_temp_avg;
+
+    app_wifi_init(MY_WIFI_SSID, MY_WIFI_PASSWORD);
+
     while (1)
     {
-#if 1
-        Serial.printf("WiFi SSID: %s\r\n", MY_WIFI_SSID);
-        Serial.printf("WiFi Password: %s\r\n", MY_WIFI_PASSWORD);
-
-        app_wifi_init(MY_WIFI_SSID, MY_WIFI_PASSWORD);
-
-        Serial.printf("WiFi IP: %s\r\n", WiFi.localIP().toString().c_str());
-        Serial.printf("WiFi RSSI: %d dBm\r\n", WiFi.RSSI());
-
-        Serial.printf("RTC Sync Start\r\n");
-        app_wifi_ntp_sync();
-
-        Serial.printf("WiFi Disconnected\r\n");
-        app_wifi_disconnet();
-
-        Serial.printf("WiFi Task Suspend! GoodBye zzz\r\n");
-        vTaskSuspend(NULL);
-#else
         app_wifi_main();
+
+        Serial.printf("SoC Temperature: %.2f °C\r\n", temperatureRead());
         vTaskDelay(TASK_WIFI_DELAY_MS / portTICK_PERIOD_MS);
-    #endif
     }
 }

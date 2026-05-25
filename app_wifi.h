@@ -27,6 +27,8 @@
 
 #define NTP_TIMEZONE_JST    (9 * 3600) // 日本標準時のタイムゾーン（UTC+9）
 // -----------------------------------------------------------
+extern bool is_wifi_task_all_proc_end;
+// -----------------------------------------------------------
 void app_wifi_scan(void);
 void app_wifi_init(const char *p_ssid, const char *p_password);
 void app_wifi_main(void);
@@ -35,5 +37,6 @@ void app_wifi_disconnet(void);
 
 // FreeRTOS タスク
 void vTaskCore1WiFi(void *p_parameter);
+// -----------------------------------------------------------
 
 #endif // APP_WIFI_H

@@ -12,38 +12,43 @@
 #include "app_memory.h"
 #include "app_ui.h"
 #include "app_wifi.h"
+#include "app_neopixel.hpp"
 
 // -----------------------------------------------------------
+#define TASK_CORE1_MAIN_DELAY_MS      (100 / portTICK_PERIOD_MS)
+
+
 #if 0
-static xTaskHandle s_xTaskCore1Main;
-static xTaskHandle s_xTaskCore1Ui;
+static TaskHandle_t s_xTaskCore1Ui;
 #endif
-static xTaskHandle s_xTaskCore1WiFi_Handle;
+static TaskHandle_t s_xTaskCore1Main;
+static TaskHandle_t s_xTaskCore1WiFi_Handle;
 // -----------------------------------------------------------
 
-#if 0
 void vTaskCore1Main(void *p_parameter)
 {
+    led_color_t rgb = {0, 0, 0};
+
     // DBG_PRINTF("[Core1] vTaskCore1Main\n");
 
     while (1)
     {
-        if (s_wifi_flg != true)
-        {
-            // DeepSleep @DEEPSLEEP_TIME_US
+        // WiFiタスクが全仕事が終わってSuspendだったらDeepSleep
+        if (is_wifi_task_all_proc_end == true) {
             uint32_t dat = (DEEPSLEEP_TIME_US / 60) / 1000000;
-            DBG_PRINTF("[Core1] vTaskCore1Main ... No Proc. DeepSleep Now!\n");
-            DBG_PRINTF("DeepSleep : %d min\n", dat);
-            app_neopixel_main(16, 0, 16, 0, true, false); // 紫
+            DBG_PRINTF("[Core1] All Task Proc End\n");
+            DBG_PRINTF("Now on DeepSleep\n");
+            DBG_PRINTF("WakeUp: %d min after! Goodnight zzz\n", dat);
+            app_neopixel_set_rgb(0, &rgb); // LED消灯
+
+            // DeepSleep開始
             esp_deep_sleep_start();
-        } else {
-            // TODO: Core1メインタスクの処理実装
-            NOP;
         }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(TASK_CORE1_MAIN_DELAY_MS);
     }
 }
 
+#if 0
 void vTaskCore1Ui(void *p_parameter)
 {
     app_ui_init();
@@ -67,15 +72,15 @@ void app_main_init_core1(void)
     app_mem_test();
 #endif
 
-#if 0
-    xTaskCreatePinnedToCore(vTaskCore1Main,   // コールバック関数ポインタ
-                            "vTaskCore1Main", // タスク名
-                            2048,              // スタック
+    xTaskCreatePinnedToCore(vTaskCore1Main,    // コールバック関数ポインタ
+                            "vTaskCore1Main",  // タスク名
+                            4096,              // スタック
                             NULL,              // パラメータ
-                            3,                 // 優先度(0～7、7が最優先)
+                            5,                 // 優先度(0～7、7が最優先)
                             &s_xTaskCore1Main, // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
 
+#if 0
     xTaskCreatePinnedToCore(vTaskCore1Ui,      // コールバック関数ポインタ
                             "vTaskCore1Ui",    // タスク名
                             4096,              // スタック
@@ -87,9 +92,9 @@ void app_main_init_core1(void)
 
     xTaskCreatePinnedToCore(vTaskCore1WiFi,    // コールバック関数ポインタ
                             "vTaskCore1WiFi",  // タスク名
-                            9192,              // スタック
+                            8192,              // スタック
                             NULL,              // パラメータ
-                            6,                 // 優先度(0～7、7が最優先)
+                            3,                 // 優先度(0～7、7が最優先)
                             &s_xTaskCore1WiFi_Handle, // ハンドル
                             CPU_CORE_1);       // Core0 or Core1
 }
