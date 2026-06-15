@@ -236,7 +236,6 @@ void vTaskCore1WiFi(void *p_parameter)
     static float s_temp_avg;
 
     app_wifi_init(MY_WIFI_SSID, MY_WIFI_PASSWORD);
-    Serial.printf("SoC Temperature: %.2f °C\r\n", temperatureRead());
 
     while (1)
     {

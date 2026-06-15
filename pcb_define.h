@@ -22,8 +22,8 @@
 #define FLASH_SIZE_BYTE   (4 * 1024 * 1024)
 
 // NOTE: オンボード赤色LEDとRGBLEDは同じ　「GPIO 48」！(同じピンにするなやw)
-#define OB_LED_PIN        48 // オンボード赤色LED    @GPIO 48
-#define OB_RGBLED_PIN     48 // オンボードRGBLED @GPIO 48
+#define OB_LED_PIN        48 // オンボード赤色LED @GPIO 48
+#define OB_RGBLED_PIN     48 // オンボードRGBLED  @GPIO 48
 #define UART_BAUD         115200
 #endif // PCB_ESP32_S3_SUPER_MINI
 
@@ -70,7 +70,7 @@
 #define DEEPSLEEP_TIME_US_12HOUR    (43200ULL * 1000000ULL) // DeepSleep @12時間
 #define DEEPSLEEP_TIME_US_24HOUR    (86400ULL * 1000000ULL) // DeepSleep @24時間
 
-#define DEEPSLEEP_TIME_US           DEEPSLEEP_TIME_US_1MIN
+#define DEEPSLEEP_TIME_US           DEEPSLEEP_TIME_US_5MIN
 
 // -----------------------------------------------------------
 

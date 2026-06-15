@@ -13,7 +13,7 @@
 // -----------------------------------------------------------
 // LEDカラーテーブル
 const led_color_data_t g_led_color_tbl[] = {
-//      |  R  |  G  |  B  |
+//   |  R  |  G  |  B  |
     { { 255,   0,   0 }, "RED" },    // 赤
     { { 255, 255,   0 }, "YELLOW" }, // 黄
     { { 255, 165,   0 }, "ORANGE" }, // 橙
@@ -41,9 +41,7 @@ if (s_p_pixel == NULL) {
     }
 
     s_p_pixel->clear();
-    s_p_pixel->setPixelColor(led_no, s_p_pixel->Color(p_rgb->red,
-                                                p_rgb->green,
-                                                p_rgb->blue));
+    s_p_pixel->setPixelColor(led_no, s_p_pixel->Color(p_rgb->red, p_rgb->green,p_rgb->blue));
     s_p_pixel->setBrightness(brightness);
     s_p_pixel->show();
 }

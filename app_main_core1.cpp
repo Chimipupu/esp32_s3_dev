@@ -15,8 +15,7 @@
 #include "app_neopixel.hpp"
 
 // -----------------------------------------------------------
-#define TASK_CORE1_MAIN_DELAY_MS      (100 / portTICK_PERIOD_MS)
-
+#define TASK_CORE1_MAIN_DELAY_MS      (1000 / portTICK_PERIOD_MS)
 
 #if 0
 static TaskHandle_t s_xTaskCore1Ui;
@@ -33,17 +32,16 @@ void vTaskCore1Main(void *p_parameter)
 
     while (1)
     {
-        // WiFiタスクが全仕事が終わってSuspendだったらDeepSleep
+#ifdef USE_DEEP_SLEEP
         if (is_wifi_task_all_proc_end == true) {
-            uint32_t dat = (DEEPSLEEP_TIME_US / 60) / 1000000;
-            DBG_PRINTF("[Core1] All Task Proc End\n");
             DBG_PRINTF("Now on DeepSleep\n");
-            DBG_PRINTF("WakeUp: %d min after! Goodnight zzz\n", dat);
             app_neopixel_set_rgb(0, &rgb); // LED消灯
 
             // DeepSleep開始
             esp_deep_sleep_start();
         }
+#endif
+        DBG_PRINTF("SoC Temperature: %.2f °C\r\n", temperatureRead());
         vTaskDelay(TASK_CORE1_MAIN_DELAY_MS);
     }
 }
@@ -65,13 +63,15 @@ void app_main_init_core1(void)
 {
     // xSerialMutex = xSemaphoreCreateMutex();
 
+#ifdef USE_DEEP_SLEEP
     // Deep Sleepからの起床確認
     if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) {
-        DBG_PRINTF("[Core1] Wakeup from DeepSleep! zzz\n");
+        DBG_PRINTF("[Core1] Wakeup from DeepSleep!\n");
     }
 
-    // Deep Sleep
+    // Deep Sleep 有効化
     esp_sleep_enable_timer_wakeup(DEEPSLEEP_TIME_US);
+#endif
 
 #ifdef DEBUG_RAM_TEST
     app_mem_test();

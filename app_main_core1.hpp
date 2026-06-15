@@ -13,9 +13,14 @@
 // FreeRTOS
 #include <task.h>
 
-// #include "app_wifi.hpp"
+// -----------------------------------------------------------
+// [コンパイルスイッチ]
+#define USE_DEEP_SLEEP
 
+// -----------------------------------------------------------
 void app_main_init_core1(void);
 void app_main_core1(void);
+
+// -----------------------------------------------------------
 
 #endif /* APP_MAIN_CORE1_HPP */
